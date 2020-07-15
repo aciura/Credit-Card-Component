@@ -1,0 +1,19 @@
+.card {
+  background-color: #efefef;
+  width: 600px;
+  // height: 96px;
+  margin: 0 auto;
+  padding: 2rem;
+  .inner {
+    display: flex;
+    flex-direction: row;
+
+    background-color: #ffffff;
+
+    input {
+      outline: none;
+      border: none;
+      border-style: hidden;
+    }
+  }
+}
