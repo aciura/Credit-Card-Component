@@ -3,6 +3,10 @@ import {
   isValidNumber,
   formatCreditCardNumber,
   isCardNumberComplete,
+  isValidDate,
+  isCardExpiryDateComplete,
+  isCompleteDate,
+  formatExpiryDate,
 } from './numberUtils'
 
 import styles from './CreditCard.module.scss'
@@ -16,6 +20,8 @@ function CreditCard() {
   const gotoCardExpiryDate = () => {
     cardExpiryDateRef?.current?.focus()
   }
+
+  const gotoCVC = () => {}
 
   const cardNumberChanged = (e: ChangeEvent<HTMLInputElement>) => {
     console.log('cardNumberChanged', e.target.value)
@@ -31,6 +37,14 @@ function CreditCard() {
 
   const cardExpiryDateChanged = (e: ChangeEvent<HTMLInputElement>) => {
     console.log('cardExpiryDateChanged', e.target.value)
+    const rawValue = e.target.value
+    if (isValidDate(rawValue)) {
+      const formateted = formatExpiryDate(rawValue)
+      setCardExpiryDate(formateted)
+      if (isCardExpiryDateComplete(formateted)) {
+        console.log('gotoCVC()')
+      }
+    }
   }
 
   return (
