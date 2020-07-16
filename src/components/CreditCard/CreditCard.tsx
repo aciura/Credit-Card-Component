@@ -1,68 +1,96 @@
-import React, { ChangeEvent } from 'react'
+import React from 'react'
 import {
-  isValidNumber,
+  isValidNumberOrEmpty,
   formatCreditCardNumber,
   isCardNumberComplete,
-  isValidDate,
-  isCardExpiryDateComplete,
-  isCompleteDate,
+  isValidDateOrEmpty,
+  isCardExpiryDateValid,
   formatExpiryDate,
+  isCvcComplete,
+  isValidCvc,
 } from './numberUtils'
+import CardInput from './CardInput'
+import CardImage from './CardImage'
 
 import styles from './CreditCard.module.scss'
+import { generateKeyPair } from 'crypto'
+
+const ExpiryDateInputName = 'expiry-date'
+const CardNumberInputName = 'card-number'
+const CvcInputName = 'cvc'
 
 function CreditCard() {
-  const [cardNumber, setCardNumber] = React.useState<string>('')
-  const [cardExpiryDate, setCardExpiryDate] = React.useState<string>('')
+  const [inputWithFocus, setInputWithFocus] = React.useState<string>('')
+  const [expiryDateError, setExpiryDateError] = React.useState<string>('')
 
-  const cardExpiryDateRef = React.useRef<HTMLInputElement>(null)
-
-  const gotoCardExpiryDate = () => {
-    cardExpiryDateRef?.current?.focus()
-  }
-
-  const gotoCVC = () => {}
-
-  const cardNumberChanged = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log('cardNumberChanged', e.target.value)
-    const rawValue = e.target.value
-    if (isValidNumber(rawValue)) {
-      const formattedNumber = formatCreditCardNumber(rawValue)
-      setCardNumber(formattedNumber)
-      if (isCardNumberComplete(formattedNumber)) {
-        gotoCardExpiryDate()
-      }
+  const gotoNextField = () => {
+    console.log('gotoNextField current:', inputWithFocus)
+    switch (inputWithFocus) {
+      case CardNumberInputName:
+        setInputWithFocus(ExpiryDateInputName)
+        break
+      case ExpiryDateInputName:
+        setInputWithFocus(CvcInputName)
+        break
+      default:
+        setInputWithFocus('')
     }
   }
 
-  const cardExpiryDateChanged = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log('cardExpiryDateChanged', e.target.value)
-    const rawValue = e.target.value
-    if (isValidDate(rawValue)) {
-      const formateted = formatExpiryDate(rawValue)
-      setCardExpiryDate(formateted)
-      if (isCardExpiryDateComplete(formateted)) {
-        console.log('gotoCVC()')
-      }
+  const cardNumberChanged = (value: string) => {
+    console.log('Card number', value)
+    setInputWithFocus(CardNumberInputName)
+  }
+
+  const cardExpiryDateChanged = (value: string) => {
+    console.log('cardExpiryDate', value)
+    setInputWithFocus(ExpiryDateInputName)
+    if (value.length === 7 && !isCardExpiryDateValid(value)) {
+      setExpiryDateError('Card is not valid')
+    } else {
+      setExpiryDateError('')
     }
   }
+
+  const cardCvcChange = (value: string) => {
+    console.log('cardcvcChange', value)
+    setInputWithFocus(CvcInputName)
+  }
+
+  console.log({ inputWithFocus })
 
   return (
     <div className={styles.card}>
       <div className={styles.inner}>
-        <div>IMG</div>
-        <input
+        <CardImage />
+        <CardInput
           placeholder="Card number"
-          value={cardNumber}
           onChange={cardNumberChanged}
+          isValid={isValidNumberOrEmpty}
+          formatValue={formatCreditCardNumber}
+          isComplete={isCardNumberComplete}
+          gotoNextField={gotoNextField}
+          hasFocus={inputWithFocus === CardNumberInputName}
         />
-        <input
+        <CardInput
           placeholder="MM / YY"
-          ref={cardExpiryDateRef}
-          value={cardExpiryDate}
           onChange={cardExpiryDateChanged}
+          isValid={isValidDateOrEmpty}
+          formatValue={formatExpiryDate}
+          isComplete={isCardExpiryDateValid}
+          gotoNextField={gotoNextField}
+          hasFocus={inputWithFocus === ExpiryDateInputName}
+          error={expiryDateError}
         />
-        <input placeholder="CVC" />
+        <CardInput
+          placeholder="CVC"
+          onChange={cardCvcChange}
+          isValid={isValidCvc}
+          formatValue={(value) => value}
+          isComplete={isCvcComplete}
+          gotoNextField={gotoNextField}
+          hasFocus={inputWithFocus === CvcInputName}
+        />
       </div>
     </div>
   )
