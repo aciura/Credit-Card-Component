@@ -34,12 +34,15 @@ export const isValidDateOrEmpty = (value: string) => {
 }
 
 export const formatExpiryDate = (value: string) => {
-  const isIt2ndChar = (i: number) => i % 2 === 0 && i > 0
+  const isIt2ndChar = (i: number) => i % 2 === 0 && i < 4
   return value
     .trim()
     .split('')
     .filter((char) => /\d/.test(char))
-    .reduce((acc, char, i) => acc + (isIt2ndChar(i) ? ' / ' + char : char), '')
+    .reduce(
+      (acc, char, i) => acc + (isIt2ndChar(i + 1) ? char + ' / ' : char),
+      '',
+    )
 }
 
 const isValidExpiry = (value: string) => {

@@ -13,7 +13,6 @@ import CardInput from './CardInput'
 import CardImage from './CardImage'
 
 import styles from './CreditCard.module.scss'
-import { generateKeyPair } from 'crypto'
 
 const ExpiryDateInputName = 'expiry-date'
 const CardNumberInputName = 'card-number'
@@ -81,6 +80,7 @@ function CreditCard() {
           gotoNextField={gotoNextField}
           hasFocus={inputWithFocus === ExpiryDateInputName}
           error={expiryDateError}
+          isBackspaceSpecial={true}
         />
         <CardInput
           placeholder="CVC"
