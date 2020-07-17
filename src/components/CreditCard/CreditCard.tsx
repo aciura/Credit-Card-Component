@@ -11,6 +11,7 @@ import {
 } from './numberUtils'
 import CardInput from './CardInput'
 import CardImage from './CardImage'
+import CardType from './CardType'
 
 import styles from './CreditCard.module.scss'
 
@@ -21,9 +22,10 @@ const CvcInputName = 'cvc'
 function CreditCard() {
   const [inputWithFocus, setInputWithFocus] = React.useState<string>('')
   const [expiryDateError, setExpiryDateError] = React.useState<string>('')
+  const [cardType, setCardType] = React.useState<CardType>(CardType.Generic)
 
   const gotoNextField = () => {
-    console.log('gotoNextField current:', inputWithFocus)
+    // console.log('gotoNextField current:', inputWithFocus)
     switch (inputWithFocus) {
       case CardNumberInputName:
         setInputWithFocus(ExpiryDateInputName)
@@ -36,13 +38,18 @@ function CreditCard() {
     }
   }
 
-  const cardNumberChanged = (value: string) => {
-    console.log('Card number', value)
+  const cardNumberChanged = (cardNumber: string) => {
+    console.log('Card number value', cardNumber)
     setInputWithFocus(CardNumberInputName)
+    if (cardNumber.startsWith('5')) {
+      setCardType(CardType.Master)
+    } else if (cardNumber.startsWith('4')) {
+      setCardType(CardType.Visa)
+    } else setCardType(CardType.Generic)
   }
 
   const cardExpiryDateChanged = (value: string) => {
-    console.log('cardExpiryDate', value)
+    console.log('Card expiry change', value)
     setInputWithFocus(ExpiryDateInputName)
     if (value.length === 7 && !isCardExpiryDateValid(value)) {
       setExpiryDateError('Card is not valid')
@@ -52,17 +59,16 @@ function CreditCard() {
   }
 
   const cardCvcChange = (value: string) => {
-    console.log('cardcvcChange', value)
+    console.log('Card CVC Change', value)
     setInputWithFocus(CvcInputName)
   }
-
-  console.log({ inputWithFocus })
 
   return (
     <div className={styles.card}>
       <div className={styles.inner}>
-        <CardImage />
+        <CardImage type={cardType} />
         <CardInput
+          name={CardNumberInputName}
           placeholder="Card number"
           onChange={cardNumberChanged}
           isValid={isValidNumberOrEmpty}
@@ -72,6 +78,7 @@ function CreditCard() {
           hasFocus={inputWithFocus === CardNumberInputName}
         />
         <CardInput
+          name={ExpiryDateInputName}
           placeholder="MM / YY"
           onChange={cardExpiryDateChanged}
           isValid={isValidDateOrEmpty}
@@ -83,6 +90,7 @@ function CreditCard() {
           isBackspaceSpecial={true}
         />
         <CardInput
+          name={CvcInputName}
           placeholder="CVC"
           onChange={cardCvcChange}
           isValid={isValidCvc}

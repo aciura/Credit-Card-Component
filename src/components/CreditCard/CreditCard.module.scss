@@ -1,12 +1,17 @@
 .card {
   background-color: #efefef;
+  box-sizing: border-box;
   width: 600px;
   margin: 0 auto;
-  padding: 1rem;
+
+  font-size: 20px;
+  padding: 1em 1.25em;
 
   .inner {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    border-radius: 5px 5px;
 
     padding: 1rem;
     background-color: #ffffff;
@@ -15,8 +20,21 @@
       outline: none;
       border: none;
       border-style: hidden;
+      padding: 0 0;
 
-      font-size: 16px;
+      font-size: 1em;
+    }
+
+    // :global(.card-number) {
+    // width: 19em;
+    // }
+
+    :global(.expiry-date) {
+      width: 7em;
+    }
+
+    :global(.cvc) {
+      width: 3em;
     }
   }
 }

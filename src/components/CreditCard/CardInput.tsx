@@ -1,6 +1,7 @@
 import React, { ChangeEvent, KeyboardEvent } from 'react'
 
 type CardInputProps = {
+  name: string
   placeholder: string
   onChange: (value: string) => void
   gotoNextField: () => void
@@ -18,6 +19,7 @@ type InputSelection = {
 }
 
 function CardInput({
+  name,
   placeholder,
   onChange,
   gotoNextField,
@@ -33,7 +35,7 @@ function CardInput({
   const [selection, setSelection] = React.useState<InputSelection>()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log({ placeholder, value: e.target.value })
+    // console.log({ placeholder, value: e.target.value })
     const rawValue = e.target.value
 
     if (isValid(rawValue)) {
@@ -79,6 +81,7 @@ function CardInput({
 
   return (
     <input
+      className={name}
       placeholder={placeholder}
       value={value}
       onChange={handleChange}
